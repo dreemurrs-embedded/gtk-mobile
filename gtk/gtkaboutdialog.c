@@ -51,12 +51,12 @@
 #include "gtktogglebutton.h"
 #include "gtktypebuiltins.h"
 #include "gtkstack.h"
-#include "gtkstackswitcher.h"
 #include "gtksettings.h"
 #include "gtkheaderbar.h"
 #include "gtkprivate.h"
 #include "gtkintl.h"
 #include "gtkdialogprivate.h"
+#include "hdy-view-switcher-bar-private.h"
 
 
 /**
@@ -597,6 +597,7 @@ gtk_about_dialog_class_init (GtkAboutDialogClass *klass)
   gtk_widget_class_bind_template_child_private (widget_class, GtkAboutDialog, credits_grid);
   gtk_widget_class_bind_template_child_private (widget_class, GtkAboutDialog, license_view);
 
+  gtk_widget_class_bind_template_callback (widget_class, close_cb);
   gtk_widget_class_bind_template_callback (widget_class, emit_activate_link);
   gtk_widget_class_bind_template_callback (widget_class, text_view_event_after);
   gtk_widget_class_bind_template_callback (widget_class, text_view_key_press_event);
@@ -622,9 +623,9 @@ update_stack_switcher_visibility (GtkAboutDialog *about)
 
   if (gtk_widget_get_visible (priv->credits_page) ||
       gtk_widget_get_visible (priv->license_page))
-    gtk_widget_show (priv->stack_switcher);
+    gtk_hdy_view_switcher_bar_set_reveal (GTK_HDY_VIEW_SWITCHER_BAR (priv->stack_switcher), TRUE);
   else
-    gtk_widget_hide (priv->stack_switcher);
+    gtk_hdy_view_switcher_bar_set_reveal (GTK_HDY_VIEW_SWITCHER_BAR (priv->stack_switcher), FALSE);
 }
 
 static void
@@ -742,6 +743,8 @@ gtk_about_dialog_init (GtkAboutDialog *about)
   priv->license_type = GTK_LICENSE_UNKNOWN;
 
   gtk_dialog_set_default_response (GTK_DIALOG (about), GTK_RESPONSE_CANCEL);
+
+  g_type_ensure (GTK_TYPE_HDY_VIEW_SWITCHER_BAR);
 
   gtk_widget_init_template (GTK_WIDGET (about));
   gtk_dialog_set_use_header_bar_from_setting (GTK_DIALOG (about));
@@ -2191,6 +2194,8 @@ add_credits_section (GtkAboutDialog  *about,
   markup = g_strdup_printf ("<span size=\"small\">%s</span>", title);
   label = gtk_label_new (markup);
   gtk_label_set_use_markup (GTK_LABEL (label), TRUE);
+  gtk_label_set_line_wrap (GTK_LABEL (label), TRUE);
+  gtk_label_set_line_wrap_mode (GTK_LABEL (label), PANGO_WRAP_WORD_CHAR);
   g_free (markup);
   gtk_widget_set_halign (label, GTK_ALIGN_END);
   gtk_widget_set_valign (label, GTK_ALIGN_CENTER);
