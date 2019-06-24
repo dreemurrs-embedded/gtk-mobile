@@ -36,6 +36,7 @@
 #include "gtkimage.h"
 #include "gtkintl.h"
 #include "gtkprivate.h"
+#include "gtkorientable.h"
 #include "gtktypebuiltins.h"
 
 /**
@@ -327,6 +328,7 @@ gtk_message_dialog_init (GtkMessageDialog *dialog)
 G_GNUC_BEGIN_IGNORE_DEPRECATIONS
   action_area = gtk_dialog_get_action_area (GTK_DIALOG (dialog));
 G_GNUC_END_IGNORE_DEPRECATIONS
+  gtk_orientable_set_orientation (GTK_ORIENTABLE (action_area), GTK_ORIENTATION_VERTICAL);
   gtk_button_box_set_layout (GTK_BUTTON_BOX (action_area), GTK_BUTTONBOX_EXPAND);
 
   settings = gtk_widget_get_settings (GTK_WIDGET (dialog));
