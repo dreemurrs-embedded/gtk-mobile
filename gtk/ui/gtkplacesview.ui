@@ -300,34 +300,6 @@
           <class name="background"/>
         </style>
         <child>
-          <object class="GtkLabel">
-            <property name="visible">1</property>
-            <property name="hexpand">1</property>
-            <property name="xalign">0</property>
-            <property name="label" translatable="yes">Connect to _Server</property>
-            <property name="mnemonic-widget">address_entry</property>
-            <property name="use-underline">1</property>
-            <attributes>
-              <attribute name="weight" value="bold"/>
-            </attributes>
-          </object>
-        </child>
-        <child>
-          <object class="GtkButton" id="connect_button">
-            <property name="label" translatable="yes">Con_nect</property>
-            <property name="use-underline">1</property>
-            <property name="visible">1</property>
-            <property name="can-focus">1</property>
-            <property name="sensitive">0</property>
-            <property name="receives-default">1</property>
-            <property name="valign">center</property>
-            <signal name="clicked" handler="on_connect_button_clicked" object="GtkPlacesView" swapped="yes"/>
-          </object>
-          <packing>
-            <property name="pack-type">end</property>
-          </packing>
-        </child>
-        <child>
           <object class="GtkBox">
             <property name="visible">1</property>
             <property name="hexpand">1</property>
@@ -336,7 +308,6 @@
                 <property name="visible">1</property>
                 <property name="can-focus">1</property>
                 <property name="hexpand">1</property>
-                <property name="width-chars">20</property>
                 <property name="placeholder-text" translatable="yes">Enter server address…</property>
                 <property name="secondary-icon-name">dialog-question-symbolic</property>
                 <property name="completion">address_entry_completion</property>
@@ -366,6 +337,18 @@
             <style>
               <class name="linked"/>
             </style>
+          </object>
+        </child>
+        <child>
+          <object class="GtkButton" id="connect_button">
+            <property name="label" translatable="yes">Con_nect</property>
+            <property name="use-underline">1</property>
+            <property name="visible">1</property>
+            <property name="can-focus">1</property>
+            <property name="sensitive">0</property>
+            <property name="receives-default">1</property>
+            <property name="valign">center</property>
+            <signal name="clicked" handler="on_connect_button_clicked" object="GtkPlacesView" swapped="yes"/>
           </object>
           <packing>
             <property name="pack-type">end</property>
