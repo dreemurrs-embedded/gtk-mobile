@@ -223,7 +223,6 @@ struct _GtkFileChooserWidgetPrivate {
   GtkWidget *save_widgets_table;
 
   /* The file browsing widgets */
-  GtkWidget *browse_widgets_hpaned;
   GtkWidget *browse_header_revealer;
   GtkWidget *browse_header_stack;
   GtkWidget *browse_files_stack;
@@ -265,6 +264,7 @@ struct _GtkFileChooserWidgetPrivate {
 
   GtkWidget *places_sidebar;
   GtkWidget *places_view;
+  GtkWidget *reveal_sidebar_button;
   StartupMode startup_mode;
 
   /* OPERATION_MODE_SEARCH */
@@ -1287,6 +1287,8 @@ places_sidebar_open_location_cb (GtkPlacesSidebar     *sidebar,
     operation_mode_set (impl, OPERATION_MODE_RECENT);
   else
     change_folder_and_display_error (impl, location, clear_entry);
+
+  gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (priv->reveal_sidebar_button), FALSE);
 }
 
 /* Callback used when the places sidebar needs us to display an error message */
@@ -2858,6 +2860,8 @@ places_sidebar_show_other_locations_with_flags_cb (GtkPlacesSidebar     *sidebar
   update_preview_widget_visibility (impl);
 
   operation_mode_set (impl, OPERATION_MODE_OTHER_LOCATIONS);
+
+  gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (priv->reveal_sidebar_button), FALSE);
 }
 
 static void
@@ -2915,14 +2919,6 @@ gtk_file_chooser_widget_constructed (GObject *object)
   profile_end ("end", NULL);
 }
 
-static void
-update_extra_and_filters (GtkFileChooserWidget *impl)
-{
-  gtk_widget_set_visible (impl->priv->extra_and_filters,
-                          gtk_widget_get_visible (impl->priv->extra_align) ||
-                          gtk_widget_get_visible (impl->priv->filter_combo_hbox));
-}
-
 /* Sets the extra_widget by packing it in the appropriate place */
 static void
 set_extra_widget (GtkFileChooserWidget *impl,
@@ -2947,12 +2943,10 @@ set_extra_widget (GtkFileChooserWidget *impl,
   if (priv->extra_widget)
     {
       gtk_container_add (GTK_CONTAINER (priv->extra_align), priv->extra_widget);
-      gtk_widget_show (priv->extra_align);
     }
   else
     gtk_widget_hide (priv->extra_align);
 
-  /* Calls update_extra_and_filters */
   show_filters (impl, priv->filters != NULL);
 }
 
@@ -3868,7 +3862,6 @@ settings_load (GtkFileChooserWidget *impl)
   gint sort_column;
   GtkSortType sort_order;
   StartupMode startup_mode;
-  gint sidebar_width;
   GSettings *settings;
 
   settings = _gtk_file_chooser_get_settings_for_widget (GTK_WIDGET (impl));
@@ -3878,7 +3871,6 @@ settings_load (GtkFileChooserWidget *impl)
   show_type_column = g_settings_get_boolean (settings, SETTINGS_KEY_SHOW_TYPE_COLUMN);
   sort_column = g_settings_get_enum (settings, SETTINGS_KEY_SORT_COLUMN);
   sort_order = g_settings_get_enum (settings, SETTINGS_KEY_SORT_ORDER);
-  sidebar_width = g_settings_get_int (settings, SETTINGS_KEY_SIDEBAR_WIDTH);
   startup_mode = g_settings_get_enum (settings, SETTINGS_KEY_STARTUP_MODE);
   sort_directories_first = g_settings_get_boolean (settings, SETTINGS_KEY_SORT_DIRECTORIES_FIRST);
   date_format = g_settings_get_enum (settings, SETTINGS_KEY_DATE_FORMAT);
@@ -3904,7 +3896,6 @@ settings_load (GtkFileChooserWidget *impl)
    */
 
   update_time_renderer_visible (impl);
-  gtk_paned_set_position (GTK_PANED (priv->browse_widgets_hpaned), sidebar_width);
 }
 
 static void
@@ -3925,8 +3916,6 @@ settings_save (GtkFileChooserWidget *impl)
   g_settings_set_boolean (settings, SETTINGS_KEY_SORT_DIRECTORIES_FIRST, priv->sort_directories_first);
   g_settings_set_enum (settings, SETTINGS_KEY_SORT_COLUMN, priv->sort_column);
   g_settings_set_enum (settings, SETTINGS_KEY_SORT_ORDER, priv->sort_order);
-  g_settings_set_int (settings, SETTINGS_KEY_SIDEBAR_WIDTH,
-                      gtk_paned_get_position (GTK_PANED (priv->browse_widgets_hpaned)));
   g_settings_set_enum (settings, SETTINGS_KEY_DATE_FORMAT, priv->show_time ? DATE_FORMAT_WITH_TIME : DATE_FORMAT_REGULAR);
   g_settings_set_enum (settings, SETTINGS_KEY_TYPE_FORMAT, priv->type_format);
 
@@ -6227,7 +6216,6 @@ show_filters (GtkFileChooserWidget *impl,
   GtkFileChooserWidgetPrivate *priv = impl->priv;
 
   gtk_widget_set_visible (priv->filter_combo_hbox, show);
-  update_extra_and_filters (impl);
 }
 
 static void
@@ -8655,7 +8643,6 @@ gtk_file_chooser_widget_class_init (GtkFileChooserWidgetClass *class)
                                                "/org/gtk/libgtk/ui/gtkfilechooserwidget.ui");
 
   /* A *lot* of widgets that we need to handle .... */
-  gtk_widget_class_bind_template_child_private (widget_class, GtkFileChooserWidget, browse_widgets_hpaned);
   gtk_widget_class_bind_template_child_private (widget_class, GtkFileChooserWidget, browse_files_stack);
   gtk_widget_class_bind_template_child_private (widget_class, GtkFileChooserWidget, places_sidebar);
   gtk_widget_class_bind_template_child_private (widget_class, GtkFileChooserWidget, places_view);
@@ -8672,6 +8659,7 @@ gtk_file_chooser_widget_class_init (GtkFileChooserWidgetClass *class)
   gtk_widget_class_bind_template_child_private (widget_class, GtkFileChooserWidget, extra_align);
   gtk_widget_class_bind_template_child_private (widget_class, GtkFileChooserWidget, extra_and_filters);
   gtk_widget_class_bind_template_child_private (widget_class, GtkFileChooserWidget, location_entry_box);
+  gtk_widget_class_bind_template_child_private (widget_class, GtkFileChooserWidget, reveal_sidebar_button);
   gtk_widget_class_bind_template_child_private (widget_class, GtkFileChooserWidget, search_entry);
   gtk_widget_class_bind_template_child_private (widget_class, GtkFileChooserWidget, search_spinner);
   gtk_widget_class_bind_template_child_private (widget_class, GtkFileChooserWidget, list_name_column);
