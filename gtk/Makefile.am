@@ -602,6 +602,7 @@ gtk_private_h_sources =		\
 	gtktreemenu.h		\
 	gdkpixbufutilsprivate.h \
 	hdy-style-private.h	\
+	hdy-view-switcher-button-private.h	\
 	open-type-layout.h	\
 	language-names.h	\
 	script-names.h
@@ -977,6 +978,7 @@ gtk_base_c_sources = 		\
 	gtkwin32draw.c		\
 	gtkwin32theme.c		\
 	gdkpixbufutils.c	\
+	hdy-view-switcher-button.c	\
 	language-names.c	\
 	script-names.c
 
@@ -1231,7 +1233,8 @@ templates =				\
 	ui/gtkstatusbar.ui		\
 	ui/gtktooltipwindow.ui		\
 	ui/gtkvolumebutton.ui		\
-	ui/gtksidebarrow.ui
+	ui/gtksidebarrow.ui		\
+	ui/hdy-view-switcher-button.ui
 
 #
 # rules to generate built sources
