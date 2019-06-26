@@ -30,6 +30,7 @@
 
 #include "gtkcsstypesprivate.h"
 #include "gtktexthandleprivate.h"
+#include "hdy-view-switcher-private.h"
 
 G_BEGIN_DECLS
 
