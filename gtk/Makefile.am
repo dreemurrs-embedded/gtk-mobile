@@ -602,6 +602,7 @@ gtk_private_h_sources =		\
 	gtkwindowprivate.h	\
 	gtktreemenu.h		\
 	gdkpixbufutilsprivate.h \
+	hdy-style-private.h	\
 	open-type-layout.h	\
 	language-names.h	\
 	script-names.h
@@ -1325,6 +1326,10 @@ gtk.gresource.xml: Makefile.am inspector/Makefile.inc
 	for f in $(srcdir)/ui/*.ui; do \
 	  n=`basename $$f`; \
 	  echo "    <file preprocess='xml-stripblanks'>ui/$$n</file>" >> $@; \
+	done; \
+	for f in $(srcdir)/style/*.css; do \
+	  n=`basename $$f`; \
+	  echo "    <file>style/$$n</file>" >> $@; \
 	done; \
 	for s in 16x16 22x22 24x24 32x32 48x48; do \
 	  for c in actions status categories; do \
