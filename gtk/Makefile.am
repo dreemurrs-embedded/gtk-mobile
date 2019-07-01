@@ -1349,7 +1349,7 @@ gtk.gresource.xml: Makefile.am inspector/Makefile.inc
 	  done; \
 	done; \
 	for s in scalable; do \
-	  for c in status; do \
+	  for c in actions status; do \
 	    for f in $(srcdir)/icons/$$s/$$c/*.svg; do \
 	      test "$$f" = "$(srcdir)/icons/$$s/$$c/*.svg" && continue; \
 	      n=`basename $$f`; \
