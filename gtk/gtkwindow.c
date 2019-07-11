@@ -39,6 +39,7 @@
 #include "gtkcssiconthemevalueprivate.h"
 #include "gtkcssrgbavalueprivate.h"
 #include "gtkcssshadowsvalueprivate.h"
+#include "gtkdialog.h"
 #include "gtkkeyhash.h"
 #include "gtkmain.h"
 #include "gtkmnemonichash.h"
@@ -7348,11 +7349,14 @@ gtk_window_realize (GtkWidget *widget)
   GtkWindowPrivate *priv;
   gint i;
   GList *link;
+  gboolean is_pseudo_dialog;
 
   window = GTK_WINDOW (widget);
   priv = window->priv;
 
-  if (gtk_window_get_resizable (window))
+  is_pseudo_dialog = !GTK_IS_DIALOG (widget) &&
+                     !!gtk_window_get_transient_for (window);
+  if (is_pseudo_dialog && gtk_window_get_resizable (window))
     gtk_window_maximize (window);
 
   if (!priv->client_decorated && gtk_window_should_use_csd (window))
