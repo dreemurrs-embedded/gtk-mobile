@@ -778,6 +778,9 @@ gtk_dialog_map (GtkWidget *widget)
 
   GTK_WIDGET_CLASS (gtk_dialog_parent_class)->map (widget);
 
+  if (gtk_window_get_resizable (window))
+    gtk_window_maximize (window);
+
   focus = gtk_window_get_focus (window);
   if (!focus)
     {
