@@ -312,7 +312,8 @@ _gtk_header_bar_update_window_buttons (GtkHeaderBar *bar)
                 "gtk-decoration-layout", &layout_desc,
                 NULL);
 
-  is_mobile_dialog = GTK_IS_DIALOG (toplevel);
+  is_mobile_dialog = GTK_IS_DIALOG (toplevel) ||
+                     (GTK_IS_WINDOW (toplevel) && !!gtk_window_get_transient_for (GTK_WINDOW (toplevel)));
 
   if (is_mobile_dialog)
     {
