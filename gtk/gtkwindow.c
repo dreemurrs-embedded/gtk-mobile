@@ -7352,6 +7352,9 @@ gtk_window_realize (GtkWidget *widget)
   window = GTK_WINDOW (widget);
   priv = window->priv;
 
+  if (gtk_window_get_resizable (window))
+    gtk_window_maximize (window);
+
   if (!priv->client_decorated && gtk_window_should_use_csd (window))
     create_decoration (widget);
 
