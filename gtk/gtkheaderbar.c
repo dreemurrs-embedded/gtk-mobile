@@ -30,7 +30,8 @@
 #include "gtkwindowprivate.h"
 #include "gtkwidgetprivate.h"
 #include "gtkcontainerprivate.h"
-#include "a11y/gtkheaderbaraccessible.h"
+#include "gtkdialog.h"
+#include "a11y/gtkcontaineraccessible.h"
 
 #include <string.h>
 
@@ -280,6 +281,7 @@ _gtk_header_bar_update_window_buttons (GtkHeaderBar *bar)
   GMenuModel *menu;
   gboolean shown_by_shell;
   gboolean is_sovereign_window;
+  gboolean is_mobile_dialog;
 
   toplevel = gtk_widget_get_toplevel (widget);
   if (!gtk_widget_is_toplevel (toplevel))
@@ -310,7 +312,14 @@ _gtk_header_bar_update_window_buttons (GtkHeaderBar *bar)
                 "gtk-decoration-layout", &layout_desc,
                 NULL);
 
-  if (priv->decoration_layout_set)
+  is_mobile_dialog = GTK_IS_DIALOG (toplevel);
+
+  if (is_mobile_dialog)
+    {
+      g_free (layout_desc);
+      layout_desc = g_strdup ("back:");
+    }
+  else if (priv->decoration_layout_set)
     {
       g_free (layout_desc);
       layout_desc = g_strdup (priv->decoration_layout);
@@ -456,6 +465,23 @@ _gtk_header_bar_update_window_buttons (GtkHeaderBar *bar)
                   accessible = gtk_widget_get_accessible (button);
                   if (GTK_IS_ACCESSIBLE (accessible))
                     atk_object_set_name (accessible, _("Close"));
+                }
+              else if (strcmp (t[j], "back") == 0 &&
+                       gtk_window_get_deletable (window))
+                {
+                  button = gtk_button_new ();
+                  gtk_widget_set_valign (button, GTK_ALIGN_CENTER);
+                  image = gtk_image_new_from_icon_name ("go-previous-symbolic", GTK_ICON_SIZE_BUTTON);
+                  g_object_set (image, "use-fallback", TRUE, NULL);
+                  gtk_container_add (GTK_CONTAINER (button), image);
+                  gtk_widget_set_can_focus (button, TRUE);
+                  gtk_widget_show_all (button);
+                  g_signal_connect_swapped (button, "clicked",
+                                            G_CALLBACK (gtk_window_close), window);
+
+                  accessible = gtk_widget_get_accessible (button);
+                  if (GTK_IS_ACCESSIBLE (accessible))
+                    atk_object_set_name (accessible, _("Back"));
                 }
 
               if (button)
@@ -2118,7 +2144,6 @@ gtk_header_bar_class_init (GtkHeaderBarClass *class)
 
   g_object_class_install_properties (object_class, LAST_PROP, header_bar_props);
 
-  gtk_widget_class_set_accessible_type (widget_class, GTK_TYPE_HEADER_BAR_ACCESSIBLE);
   gtk_widget_class_set_accessible_role (widget_class, ATK_ROLE_PANEL);
   gtk_widget_class_set_css_name (widget_class, "headerbar");
 }
@@ -2371,7 +2396,6 @@ gtk_header_bar_set_decoration_layout (GtkHeaderBar *bar,
 
   priv = gtk_header_bar_get_instance_private (bar);
 
-  g_free (priv->decoration_layout);
   priv->decoration_layout = g_strdup (layout);
   priv->decoration_layout_set = (layout != NULL);
 
