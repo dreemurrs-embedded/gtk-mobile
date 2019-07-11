@@ -6257,6 +6257,7 @@ gtk_window_map (GtkWidget *widget)
   GdkWindow *gdk_window;
   GList *link;
   GdkDisplay *display;
+  gboolean is_dialog;
 
   if (!_gtk_widget_is_toplevel (widget))
     {
@@ -6281,7 +6282,10 @@ gtk_window_map (GtkWidget *widget)
 
   gdk_window = _gtk_widget_get_window (widget);
 
-  if (priv->maximize_initially)
+  /* Transient windows can be considered pseudo-dialogs. */
+  is_dialog = GTK_IS_DIALOG (widget) || !!gtk_window_get_transient_for (window);
+  if (priv->maximize_initially ||
+      (is_dialog && gtk_window_get_resizable (window)))
     gdk_window_maximize (gdk_window);
   else
     gdk_window_unmaximize (gdk_window);
@@ -7349,15 +7353,9 @@ gtk_window_realize (GtkWidget *widget)
   GtkWindowPrivate *priv;
   gint i;
   GList *link;
-  gboolean is_pseudo_dialog;
 
   window = GTK_WINDOW (widget);
   priv = window->priv;
-
-  is_pseudo_dialog = !GTK_IS_DIALOG (widget) &&
-                     !!gtk_window_get_transient_for (window);
-  if (is_pseudo_dialog && gtk_window_get_resizable (window))
-    gtk_window_maximize (window);
 
   if (!priv->client_decorated && gtk_window_should_use_csd (window))
     create_decoration (widget);
