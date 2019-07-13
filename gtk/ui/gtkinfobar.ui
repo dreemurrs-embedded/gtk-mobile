@@ -7,6 +7,10 @@
         <property name="visible">1</property>
         <property name="reveal-child">1</property>
         <child>
+          <object class="GtkBox">
+            <property name="visible">1</property>
+            <property name="orientation">vertical</property>
+        <child>
           <object class="GtkBox" id="content">
             <property name="visible">1</property>
             <child>
@@ -18,17 +22,6 @@
               </object>
               <packing>
                 <property name="expand">1</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkButtonBox" id="action_area">
-                <property name="visible">1</property>
-                <property name="border-width">6</property>
-                <property name="spacing">6</property>
-                <property name="layout-style">end</property>
-              </object>
-              <packing>
-                <property name="position">1</property>
               </packing>
             </child>
             <child>
@@ -47,9 +40,16 @@
                   </object>
                 </child>
               </object>
-              <packing>
-                <property name="position">2</property>
-              </packing>
+            </child>
+          </object>
+        </child>
+            <child>
+              <object class="GtkButtonBox" id="action_area">
+                <property name="visible">1</property>
+                <property name="border-width">6</property>
+                <property name="layout-style">expand</property>
+                <property name="orientation">vertical</property>
+              </object>
             </child>
           </object>
         </child>
